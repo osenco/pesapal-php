@@ -14,13 +14,48 @@ At the top of your code, configure the Pesapal object
   
 ### Payment Form
 Create a form with the following fields:
-`amount int 100
-type string MERCHANT
-description string Order Description
-reference mixed string/int 001
-first_name string John
-last_name string Doe
-email string john@yahoo.com `
+<table>
+	<thead>
+		<th>Field Name</th>
+		<th>Field Type</th>
+		<th>Possible/Default Value</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td>amount int 100</td>
+		</tr>
+		<tr>
+			<td>type </td>
+			<td>string </td>
+			<td>MERCHANT</td>
+		</tr>
+		<tr>
+			<td>description </td>
+			<td>string </td>
+			<td>Order Description</td>
+		</tr>
+		<tr>
+			<td>reference </td>
+			<td>mixed string/int </td>
+			<td>001</td>
+		</tr>
+		<tr>
+			<td>first_name </td>
+			<td>string </td>
+			<td>John</td>
+		</tr>
+		<tr>
+			<td>last_name </td>
+			<td>string </td>
+			<td>Doe</td>
+		</tr>
+		<tr>
+			<td>email </td>
+			<td>string </td>
+			<td>john@yahoo.com</td>
+		</tr>
+	</tbody>
+</table>
   
 ### Process Payment
 Call the iframe() method where you would like to render the Pesapal iframe
