@@ -14,13 +14,13 @@ At the top of your code, configure the Pesapal object
   
 ### Payment Form
 Create a form with the following fields:
-$amount int 100
-$type string MERCHANT
-$description string Order Description
-$reference mixed string/int 001
-$first_name string John
-$last_name string Doe
-$email string john@yahoo.com
+`amount int 100
+type string MERCHANT
+description string Order Description
+reference mixed string/int 001
+first_name string John
+last_name string Doe
+email string john@yahoo.com `
   
 ### Process Payment
 Call the iframe() method where you would like to render the Pesapal iframe
