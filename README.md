@@ -11,6 +11,40 @@ include the pesapal.php file in your application
 At the top of your code, configure the Pesapal object
 <br>
   `PesaPal::config( $env, $consumer_key, $consumer_secret, $callback_url );`
+  <table>
+	<thead>
+		<th>Parameter Name</th>
+		<th>Parameter Description</th>
+		<th>Parameter Type</th>
+		<th>Possible/Default Value</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td>`$env`</td>
+			<td>System Environment</td>
+			<td>string</td>
+			<td>sandbox/live</td>
+		</tr>
+		<tr>
+			<td>`$consumer_key'</td>
+			<td>Pesapal Consumer Key</td>
+			<td>string </td>
+			<td>behdklejdkjdw</td>
+		</tr>
+		<tr>
+			<td>`$consumer_secret`</td>
+			<td>Pesapal Consumer Secret</td>
+			<td>string </td>
+			<td>ncjdbckdcdhcjdcvjldhckadlxhska</td>
+		</tr>
+		<tr>
+			<td>`$callback_url`</td>
+			<td>Site Callback Endpoint/Link</td>
+			<td>string </td>
+			<td>https://yoursiteurl.tld/process_ipn</td>
+		</tr>
+	</tbody>
+</table>
   
 ### Payment Form
 Create a form with the following fields:
@@ -22,7 +56,9 @@ Create a form with the following fields:
 	</thead>
 	<tbody>
 		<tr>
-			<td>amount int 100</td>
+			<td>amount</td>
+			<td>int</td>
+			<td>100</td>
 		</tr>
 		<tr>
 			<td>type </td>
