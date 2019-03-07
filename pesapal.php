@@ -818,13 +818,15 @@ class Pesapal
 	
 	function config( $env, $consumer_key, $consumer_secret, $callback_url )
 	{
-		self::$env = $env;
-		self::$consumer_key = $consumer_key;
-		self::$consumer_secret = $consumer_secret;
-		self::$callback_url = $callback_url;
+		self::$env 				= $env;
+		self::$consumer_key 	= $consumer_key;
+		self::$consumer_secret 	= $consumer_secret;
+		self::$callback_url 	= $callback_url;
+
+		self::iframe();
 	}
 
-	public static function iframe($value='')
+	public static function iframe( $params = NULL )
 	{
 		//pesapal params
 		$token 			= $params = NULL;
@@ -858,12 +860,7 @@ class Pesapal
 		</iframe> <?php
 	}
 
-	public static function reconcile( $callback, $data )
-	{
-		return call_user_func_array( $callback, $data );
-	}
-
-	public static function process_ipn()
+	public static function process_ipn( $callback = null )
 	{
 		$statusrequestAPI = self::$env == 'sandbox' ? 'https://demo.pesapal.com/api/querypaymentstatus' : 'https://pesapal.com/api/querypaymentstatus';
 
@@ -912,7 +909,7 @@ class Pesapal
 		   
 		   //UPDATE YOUR DB TABLE WITH NEW STATUS FOR TRANSACTION WITH pesapal_transaction_tracking_id $pesapalTrackingId
 
-		   if( self::reconcile() )
+		   if( call_user_func_array( $callback, $response ) )
 		   {
 		      $response = array(
 		      	"code" => 0,
