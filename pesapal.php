@@ -806,118 +806,119 @@ if(!class_exists("OAuthUtil") ) {
 	}
 }
 
-
-/**
- * 
- */
-class Pesapal
-{
-	public static $env = 'sandbox';
-	public static $consumer_key;
-	public static $consumer_secret;
-	
-	function config( $env, $consumer_key, $consumer_secret, $callback_url )
+if(!class_exists("PesaPal") ) {
+	/**
+	 * 
+	 */
+	class PesaPal
 	{
-		self::$env 				= $env;
-		self::$consumer_key 	= $consumer_key;
-		self::$consumer_secret 	= $consumer_secret;
-		self::$callback_url 	= $callback_url;
+		public static $env = 'sandbox';
+		public static $consumer_key;
+		public static $consumer_secret;
+		
+		function config( $env, $consumer_key, $consumer_secret, $callback_url )
+		{
+			self::$env 				= $env;
+			self::$consumer_key 	= $consumer_key;
+			self::$consumer_secret 	= $consumer_secret;
+			self::$callback_url 	= $callback_url;
 
-		self::iframe();
-	}
+			self::iframe();
+		}
 
-	public static function iframe( $params = NULL )
-	{
-		//pesapal params
-		$token 			= $params = NULL;
-		$sign_method 	= new OAuthSignatureMethod_HMAC_SHA1();
-		$iframelink 	= self::$env == 'sandbox' ? 'https://demo.pesapal.com/api/PostPesapalDirectOrderV4' : 'https://pesapal.com/api/PostPesapalDirectOrderV4';
+		public static function iframe( $params = NULL )
+		{
+			//pesapal params
+			$token 			= $params = NULL;
+			$sign_method 	= new OAuthSignatureMethod_HMAC_SHA1();
+			$iframelink 	= self::$env == 'sandbox' ? 'https://demo.pesapal.com/api/PostPesapalDirectOrderV4' : 'https://pesapal.com/api/PostPesapalDirectOrderV4';
 
-		$amount 		= number_format( $_POST['amount'], 2 );
-		$desc 			= $_POST['description'];
-		$type 			= $_POST['type'];
-		$reference 		= $_POST['reference'];
-		$first_name 	= $_POST['first_name'];
-		$last_name 		= $_POST['last_name'];
-		$email 			= $_POST['email'];
-		$phonenumber 	= '';
+			$amount 		= number_format( $_POST['amount'], 2 );
+			$desc 			= $_POST['description'];
+			$type 			= $_POST['type'];
+			$reference 		= $_POST['reference'];
+			$first_name 	= $_POST['first_name'];
+			$last_name 		= $_POST['last_name'];
+			$email 			= $_POST['email'];
+			$phonenumber 	= '';
 
-		$post_xml 		= '<?xml version="1.0" encoding="utf-8"?><PesapalDirectOrderInfo xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="https://www.w3.org/2001/XMLSchema" Amount='.$amount.' Description='.$desc.' Type='.$type.' Reference='.$reference.' FirstName='.$first_name.' LastName='.$last_name.' Email='.$email.' PhoneNumber='.$phonenumber.' xmlns="https://www.pesapal.com" />';
-		$post_xml 		= htmlentities($post_xml);
+			$post_xml 		= '<?xml version="1.0" encoding="utf-8"?><PesapalDirectOrderInfo xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="https://www.w3.org/2001/XMLSchema" Amount='.$amount.' Description='.$desc.' Type='.$type.' Reference='.$reference.' FirstName='.$first_name.' LastName='.$last_name.' Email='.$email.' PhoneNumber='.$phonenumber.' xmlns="https://www.pesapal.com" />';
+			$post_xml 		= htmlentities($post_xml);
 
-		$consumer 		= new OAuthConsumer( self::$consumer_key, self::$consumer_secret);
+			$consumer 		= new OAuthConsumer( self::$consumer_key, self::$consumer_secret);
 
-		//post transaction to pesapal
-		$iframe_src 	= OAuthRequest::from_consumer_and_token($consumer, $token, "GET", $iframelink, $params);
-		$iframe_src->set_parameter("oauth_callback", self::$callback_url);
-		$iframe_src->set_parameter("pesapal_request_data", $post_xml);
-		$iframe_src->sign_request($sign_method, $consumer, $token);
+			//post transaction to pesapal
+			$iframe_src 	= OAuthRequest::from_consumer_and_token($consumer, $token, "GET", $iframelink, $params);
+			$iframe_src->set_parameter("oauth_callback", self::$callback_url);
+			$iframe_src->set_parameter("pesapal_request_data", $post_xml);
+			$iframe_src->sign_request($sign_method, $consumer, $token);
 
-		//display pesapal - iframe and pass iframe_src
-		?>
-		<iframe src="<?php echo $iframe_src;?>" width="100%" height="700px"  scrolling="no" frameBorder="0">
-			<p>Browser unable to load iFrame</p>
-		</iframe> <?php
-	}
+			//display pesapal - iframe and pass iframe_src
+			?>
+			<iframe src="<?php echo $iframe_src;?>" width="100%" height="700px"  scrolling="no" frameBorder="0">
+				<p>Browser unable to load iFrame</p>
+			</iframe> <?php
+		}
 
-	public static function process_ipn( $callback = null )
-	{
-		$statusrequestAPI = self::$env == 'sandbox' ? 'https://demo.pesapal.com/api/querypaymentstatus' : 'https://pesapal.com/api/querypaymentstatus';
+		public static function process_ipn( $callback = null )
+		{
+			$statusrequestAPI = self::$env == 'sandbox' ? 'https://demo.pesapal.com/api/querypaymentstatus' : 'https://pesapal.com/api/querypaymentstatus';
 
-		// Parameters sent to you by PesaPal IPN
-		$pesapalNotification 			= $_GET['pesapal_notification_type'];
-		$pesapalTrackingId 				= $_GET['pesapal_transaction_tracking_id'];
-		$pesapal_merchant_reference 	= $_GET['pesapal_merchant_reference'];
+			// Parameters sent to you by PesaPal IPN
+			$pesapalNotification 			= $_GET['pesapal_notification_type'];
+			$pesapalTrackingId 				= $_GET['pesapal_transaction_tracking_id'];
+			$pesapal_merchant_reference 	= $_GET['pesapal_merchant_reference'];
 
-		if( $pesapalNotification == "CHANGE" && $pesapalTrackingId!='' ) {
-		   $token = $params = NULL;
-		   $consumer = new OAuthConsumer($consumer_key, $consumer_secret);
-		   $signature_method = new OAuthSignatureMethod_HMAC_SHA1();
+			if( $pesapalNotification == "CHANGE" && $pesapalTrackingId!='' ) {
+			   $token = $params = NULL;
+			   $consumer = new OAuthConsumer($consumer_key, $consumer_secret);
+			   $signature_method = new OAuthSignatureMethod_HMAC_SHA1();
 
-		   //get transaction status
-		   $request_status = OAuthRequest::from_consumer_and_token($consumer, $token, "GET", $statusrequestAPI, $params);
-		   $request_status->set_parameter("pesapal_merchant_reference", $pesapal_merchant_reference);
-		   $request_status->set_parameter("pesapal_transaction_tracking_id",$pesapalTrackingId);
-		   $request_status->sign_request($signature_method, $consumer, $token);
+			   //get transaction status
+			   $request_status = OAuthRequest::from_consumer_and_token($consumer, $token, "GET", $statusrequestAPI, $params);
+			   $request_status->set_parameter("pesapal_merchant_reference", $pesapal_merchant_reference);
+			   $request_status->set_parameter("pesapal_transaction_tracking_id",$pesapalTrackingId);
+			   $request_status->sign_request($signature_method, $consumer, $token);
 
-		   $ch = curl_init();
-		   curl_setopt($ch, CURLOPT_URL, $request_status);
-		   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		   curl_setopt($ch, CURLOPT_HEADER, 1);
-		   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+			   $ch = curl_init();
+			   curl_setopt($ch, CURLOPT_URL, $request_status);
+			   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			   curl_setopt($ch, CURLOPT_HEADER, 1);
+			   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-		   if(defined('CURL_PROXY_REQUIRED')) if (CURL_PROXY_REQUIRED == 'True')
-		   {
-		      $proxy_tunnel_flag = (defined('CURL_PROXY_TUNNEL_FLAG') && strtoupper(CURL_PROXY_TUNNEL_FLAG) == 'FALSE') ? false : true;
-		      curl_setopt ($ch, CURLOPT_HTTPPROXYTUNNEL, $proxy_tunnel_flag);
-		      curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
-		      curl_setopt ($ch, CURLOPT_PROXY, CURL_PROXY_SERVER_DETAILS);
-		   }
+			   if(defined('CURL_PROXY_REQUIRED')) if (CURL_PROXY_REQUIRED == 'True')
+			   {
+			      $proxy_tunnel_flag = (defined('CURL_PROXY_TUNNEL_FLAG') && strtoupper(CURL_PROXY_TUNNEL_FLAG) == 'FALSE') ? false : true;
+			      curl_setopt ($ch, CURLOPT_HTTPPROXYTUNNEL, $proxy_tunnel_flag);
+			      curl_setopt ($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+			      curl_setopt ($ch, CURLOPT_PROXY, CURL_PROXY_SERVER_DETAILS);
+			   }
 
-		   $response = curl_exec($ch);
+			   $response = curl_exec($ch);
 
-		   $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-		   $raw_header  = substr($response, 0, $header_size - 4);
-		   $headerArray = explode("\r\n\r\n", $raw_header);
-		   $header      = $headerArray[count($headerArray) - 1];
+			   $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+			   $raw_header  = substr($response, 0, $header_size - 4);
+			   $headerArray = explode("\r\n\r\n", $raw_header);
+			   $header      = $headerArray[count($headerArray) - 1];
 
-		   //transaction status
-		   $elements = preg_split("/=/",substr($response, $header_size));
-		   $status = $elements[1];
+			   //transaction status
+			   $elements = preg_split("/=/",substr($response, $header_size));
+			   $status = $elements[1];
 
-		   curl_close ($ch);
-		   
-		   //UPDATE YOUR DB TABLE WITH NEW STATUS FOR TRANSACTION WITH pesapal_transaction_tracking_id $pesapalTrackingId
+			   curl_close ($ch);
+			   
+			   //UPDATE YOUR DB TABLE WITH NEW STATUS FOR TRANSACTION WITH pesapal_transaction_tracking_id $pesapalTrackingId
 
-		   if( call_user_func_array( $callback, $response ) )
-		   {
-		      $response = array(
-		      	"code" => 0,
-		      	"message" => "pesapal_notification_type=$pesapalNotification&pesapal_transaction_tracking_id=$pesapalTrackingId&pesapal_merchant_reference=$pesapal_merchant_reference"
-		      );
+			   if( call_user_func_array( $callback, $response ) )
+			   {
+			      $response = array(
+			      	"code" => 0,
+			      	"message" => "pesapal_notification_type=$pesapalNotification&pesapal_transaction_tracking_id=$pesapalTrackingId&pesapal_merchant_reference=$pesapal_merchant_reference"
+			      );
 
-		      exit( json_decode( $response ) );
-		   }
+			      exit( json_decode( $response ) );
+			   }
+			}
 		}
 	}
 }
