@@ -20,25 +20,25 @@ At the top of your code, configure the Pesapal object
 	</thead>
 	<tbody>
 		<tr>
-			<td>`$env`</td>
+			<td>$env</td>
 			<td>System Environment</td>
 			<td>string</td>
 			<td>sandbox/live</td>
 		</tr>
 		<tr>
-			<td>`$consumer_key'</td>
+			<td>$consumer_key</td>
 			<td>Pesapal Consumer Key</td>
 			<td>string </td>
 			<td>behdklejdkjdw</td>
 		</tr>
 		<tr>
-			<td>`$consumer_secret`</td>
+			<td>$consumer_secret</td>
 			<td>Pesapal Consumer Secret</td>
 			<td>string </td>
 			<td>ncjdbckdcdhcjdcvjldhckadlxhska</td>
 		</tr>
 		<tr>
-			<td>`$callback_url`</td>
+			<td>$callback_url</td>
 			<td>Site Callback Endpoint/Link</td>
 			<td>string </td>
 			<td>https://yoursiteurl.tld/process_ipn</td>
@@ -57,38 +57,43 @@ Create a form with the following fields:
 	<tbody>
 		<tr>
 			<td>amount</td>
-			<td>int</td>
+			<td>number/text</td>
 			<td>100</td>
 		</tr>
 		<tr>
 			<td>type </td>
-			<td>string </td>
+			<td>text</td>
 			<td>MERCHANT</td>
 		</tr>
 		<tr>
 			<td>description </td>
-			<td>string </td>
+			<td>text</td>
 			<td>Order Description</td>
 		</tr>
 		<tr>
 			<td>reference </td>
-			<td>mixed string/int </td>
+			<td>number/text</td>
 			<td>001</td>
 		</tr>
 		<tr>
 			<td>first_name </td>
-			<td>string </td>
+			<td>text</td>
 			<td>John</td>
 		</tr>
 		<tr>
 			<td>last_name </td>
-			<td>string </td>
+			<td>text</td>
 			<td>Doe</td>
 		</tr>
 		<tr>
 			<td>email </td>
-			<td>string </td>
+			<td>email</td>
 			<td>john@yahoo.com</td>
+		</tr>
+		<tr>
+			<td>phone</td>
+			<td>tel</td>
+			<td>254700000000</td>
 		</tr>
 	</tbody>
 </table>
@@ -99,8 +104,11 @@ Call the iframe() method where you would like to render the Pesapal iframe
   `PesaPal::iframe();`
 
 ### Process IPN Response
+#### Update Database
+Create a function to update your database with payment details - this function must return a boolean (true on success, false on failure). The function takes the response data an an argument.
+<br>
 #### Process IPN
-Create a function to update your database with payment details - this function must return a boolean (true on success, false on failure). The name of this callback function is passed as an argument to the `process_ipn();` method.
+Call the mehod on your callback url, passing the name of the callback function above as an argument
 <br>
   `PesaPal::process_ipn( $callback );`
   
