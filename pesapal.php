@@ -32,33 +32,33 @@ if(!class_exists("OAuthConsumer") ) {
 
 if(!class_exists("OAuthToken") ) {
 	class OAuthToken {
-	  // access tokens and request tokens
-	  public $key;
-	  public $secret;
-	
-	  /**
-	   * key = the token
-	   * secret = the token secret
-	   */
-	  function __construct($key, $secret) {
-		$this->key = $key;
-		$this->secret = $secret;
-	  }
-	
-	  /**
-	   * generates the basic string serialization of a token that a server
-	   * would respond to request_token and access_token calls with
-	   */
-	  function to_string() {
-		return "oauth_token=" .
-			   OAuthUtil::urlencode_rfc3986($this->key) .
-			   "&oauth_token_secret=" .
-			   OAuthUtil::urlencode_rfc3986($this->secret);
-	  }
-	
-	  function __toString() {
-		return $this->to_string();
-	  }
+		// access tokens and request tokens
+		public $key;
+		public $secret;
+
+		/**
+		* key = the token
+		* secret = the token secret
+		*/
+		function __construct($key, $secret) {
+			$this->key = $key;
+			$this->secret = $secret;
+		}
+
+		/**
+		* generates the basic string serialization of a token that a server
+		* would respond to request_token and access_token calls with
+		*/
+		function to_string() {
+			return "oauth_token=" .
+			OAuthUtil::urlencode_rfc3986($this->key) .
+			"&oauth_token_secret=" .
+			OAuthUtil::urlencode_rfc3986($this->secret);
+		}
+
+		function __toString() {
+			return $this->to_string();
+		}
 	}
 }
 
@@ -640,6 +640,7 @@ if(!class_exists("OAuthServer") ) {
 	
 	}
 }
+
 if(!class_exists("OAuthDataStore") ) {
 	class OAuthDataStore {
 	  function lookup_consumer($consumer_key) {
